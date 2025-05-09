@@ -7,7 +7,7 @@ require_app
 
 def app = UCCMe::App
 
-unless app.enviroment == :production
+unless app.environment == :production
   require 'rack/test'
   include Rack::Test::Methods # rubocop:disable Style/MixinUsage
 end

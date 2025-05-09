@@ -12,6 +12,7 @@ Metrics/BlockLength:
   Exclude:
     - spec/**/*
     - rackfile
+    - app/controllers/*.rb
 
 Security/YAMLLoad:
   Enabled: true

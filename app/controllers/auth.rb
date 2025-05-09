@@ -22,9 +22,10 @@ module UCCMe
           )
 
           session[:current_account] = account
-          flash[:notice] = "Welcome bacck #{account['username']}!"
+          flash[:notice] = "Welcome back #{account['username']}!"
           routing.redirect '/'
-        rescue StandardError
+        rescue StandardError => e
+          puts "❌ AUTH ERROR: #{e.class} - #{e.message}"
           flash.now[:error] = 'Username or password is incorrect'
           response.status = 400
           view :login

@@ -15,9 +15,9 @@ module UCCMe
       response = HTTP.post("#{@config.API_URL}/auth/authenticate",
                            json: { username:, password: })
 
-      raise(UnauthorizedError) unless reponse.code == 200
+      raise(UnauthorizedError) unless response.code == 200
 
-      response.parse['attribures']
+      response.parse['attributes']
     end
   end
 end
