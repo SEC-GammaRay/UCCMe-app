@@ -6,7 +6,7 @@ ruby File.read('.ruby-version').strip
 # web
 # gem 'erb', '~> 4.0', '>= 4.0.4'
 gem 'puma'
-gem 'rack-session'
+gem 'rack-session', '>= 2.1.1'
 gem 'roda'
 gem 'slim'
 
@@ -34,6 +34,7 @@ group :development do
 end
 
 group :development, :test do
+  gem 'rack', '>= 3.1.14'
   gem 'rack-test'
   gem 'rerun'
 end
