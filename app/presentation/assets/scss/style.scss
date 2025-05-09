@@ -1,0 +1,20 @@
+#logo {
+    max-width: 50px;
+    margin: -7px 0px;
+}
+
+.force-wrap {
+    word-wrap:break-word;
+    width:100%;
+    display:block;
+}
+
+.nav-item .nav-link {
+    padding: 0;
+}
+
+@media (min-width: 576px) {
+    .collapse.nabar-collapse {
+        display: block;
+    }
+}
