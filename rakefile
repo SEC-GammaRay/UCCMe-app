@@ -11,9 +11,38 @@ task console: :print_env do
   sh 'pry -r ./spec/test_load_all'
 end
 
-desc 'Rake all the ruby'
-task :style do
+desc 'Test all the specs'
+Rake::TestTask.new(:spec) do |t|
+  t.pattern = 'spec/**/*_spec.rb'
+  t.warning = false
+end
+
+desc 'Rerun tests on live code changes'
+task :respec do
+  sh 'rerun -c rake spec'
+end
+
+desc 'Rake rubocop to check style'
+task style: :spec do
   sh 'rubocop .'
+end
+
+desc 'Update vulnerabilities lit and audit gems'
+task :audit do
+  sh 'bundle audit check --update'
+end
+
+desc 'Checks for release'
+task release?: %i[spec style audit] do
+  puts "\nReady for release!"
+end
+
+namespace :run do
+  # Run in development mode
+  desc 'Run Web App in development mode'
+  task dev: :print_env do
+    sh 'puma -p 9292'
+  end
 end
 
 # Generate new cryptographic keys
@@ -25,13 +54,5 @@ namespace :generate do
     session_secret = RbNaCl::Random.random_bytes(64)
     secret64 = Base64.strict_encode64(session_secret)
     puts "New SESSION_SECRET (base64): #{secret64}"
-  end
-end
-
-namespace :run do
-  # Run in development mode
-  desc 'Run Web App in development mode'
-  task dev: :print_env do
-    sh 'puma -p 9292'
   end
 end
