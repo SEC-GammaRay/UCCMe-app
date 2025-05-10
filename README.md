@@ -14,7 +14,11 @@ bundle install
 
 ## Test
 
-This web app does not contain any tests yet, so sad T_T
+Run the test specification script in `Rakefile`:
+
+```
+rake spec
+```
 
 ## Execute
 
@@ -25,3 +29,10 @@ rake run:dev
 ```
 
 The application expects the API application to also be running (see `config/secrets_example.yml` for specifying its URL)
+
+## Release Check
+Before submitting pull requests, please check if specs, style, and dependency audits pass (will need to be online to update dependency database):
+
+```
+rake release?
+```

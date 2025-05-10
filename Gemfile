@@ -12,6 +12,14 @@ gem 'slim'
 
 # configuration
 gem 'figaro'
+gem 'rake'
+
+# communication
+gem 'http'
+
+# security
+gem 'rack-ssl-enforcer'
+gem 'rbnacl' # assumes libsodium package already installed
 
 # encoding
 gem 'base64'
@@ -19,18 +27,19 @@ gem 'base64'
 # debugging
 gem 'pry'
 
-# communication
-gem 'http'
-
-# security
-gem 'rbnacl' # assumes libsodium package already installed
-
 # development
 group :development do
-  gem 'rake'
   gem 'rubocop'
+  gem 'rubocop-minitest'
   gem 'rubocop-performance'
   gem 'rubocop-rake', '~> 0.7.1'
+end
+
+# testing
+group :test do
+  gem 'minitest'
+  gem 'minitest-rg'
+  gem 'webmock'
 end
 
 group :development, :test do
