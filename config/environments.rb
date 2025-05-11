@@ -6,8 +6,9 @@ require 'figaro'
 require 'logger'
 require 'rack/ssl-enforcer'
 require 'rack/session'
-
 require_relative '../require_app'
+
+require_app('lib')
 
 module UCCMe
   # Configuration for the APP
@@ -33,6 +34,9 @@ module UCCMe
 
     # Sesssion configuration
     ONE_MONTH = 60 * 60 * 24 * 30
+    @redis_url = ENV.delete('REDISCLOUD_URL')
+    SecureMessage.setup(ENV.delete('MSG_KEY')) 
+
     use Rack::Session::Cookie,
         expire_after: ONE_MONTH,
         secret: config.SESSION_SECRET

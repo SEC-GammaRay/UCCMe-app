@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rake/testtask'
+require './require_app'
 
 task :print_env do
   puts "Enviroment: #{ENV.fetch('RACK_ENV', 'development')}"
@@ -45,8 +46,17 @@ namespace :run do
   end
 end
 
+task :load_lib do
+  require_app('lib')
+end
+
 # Generate new cryptographic keys
 namespace :generate do
+  desc 'Create rbnacl key'
+  task msg_key: [:load_lib] do
+    puts "New MSG_KEY (base64): #{SecureMessage.generate_key}"
+  end
+
   desc 'Create cookie secret'
   task :session_secret do
     require 'base64'
