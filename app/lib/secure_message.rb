@@ -27,6 +27,7 @@ class SecureMessage
             JSON.parse(message_json)
         end 
     end 
-    
+end
+
 
     

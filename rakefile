@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require 'rake/testtask'
 
 task :print_env do
@@ -47,6 +46,12 @@ end
 
 # Generate new cryptographic keys
 namespace :generate do
+  desc 'Create rbnacl key'
+  task :msg_key do
+    require File.expand_path('../app/lib/secure_message', __FILE__)
+    puts "New MSG_KEY (base64): #{SecureMessage.generate_key}"
+  end
+
   desc 'Create cookie secret'
   task :session_secret do
     require 'base64'
@@ -64,6 +69,6 @@ namespace :session do
     require 'redis'
     puts 'Deleting all sessions from Redis session store'
     wiped = SecureSession.wipe_redis_sessions 
-    puts "#{wiped.count}" sessions deleted"
+    puts "#{wiped.count} session deleted"
   end 
 end 
