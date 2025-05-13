@@ -29,6 +29,7 @@ gem 'pry'
 
 # development
 group :development do
+  gem 'redis-rack'
   gem 'rubocop'
   gem 'rubocop-minitest'
   gem 'rubocop-performance'
