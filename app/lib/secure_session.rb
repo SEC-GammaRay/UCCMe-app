@@ -1,6 +1,7 @@
 require 'redis'
 require_relative 'secure_message'
 
+
 class SecureSession 
     def self.setup(redis_url)
         @redis_url = redis_url 
