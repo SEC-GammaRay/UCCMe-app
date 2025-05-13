@@ -33,6 +33,7 @@ group :development do
   gem 'rubocop-minitest'
   gem 'rubocop-performance'
   gem 'rubocop-rake', '~> 0.7.1'
+  gem 'redis-rack'
 end
 
 # testing
