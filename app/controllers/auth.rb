@@ -21,7 +21,8 @@ module UCCMe
             password: routing.params['password']
           )
 
-          session[:current_account] = account
+          # session[:current_account] = account
+          SecureSession.new(session).set(:current_account, account)
           flash[:notice] = "Welcome back #{account['username']}!"
           routing.redirect '/'
         rescue StandardError => e
@@ -34,7 +35,8 @@ module UCCMe
 
       routing.on 'logout' do
         routing.get do
-          session[:current_account] = nil
+          # session[:current_account] = nil
+          SecureSession.new(session).delete(:current_account)
           routing.redirect @login_route
         end
       end

@@ -1,38 +1,40 @@
-require 'redis'
+# frozen_string_literal: true
+
 require_relative 'secure_message'
 
+# Encrypt and Decrypt JSON encoded sessions
+class SecureSession
 
-class SecureSession 
-    def self.setup(redis_url)
-        @redis_url = redis_url 
-    end 
+  ## Class methods to create and retrieve cookie salt
+  SESSION_SECRET_BYTES = 64
 
-    SESSION_SECRET_BYTE = 64
+  # Generate secret for sessions
+  def self.generate_secret
+    SecureMessage.encoded_random_bytes(SESSION_SECRET_BYTES)
+  end
 
-    def self.generate_secret
-        SecureMessage.encoded_random_bytes(SESSION_SECRET_BYTE)
-    end 
+  ## Instance methods to store and retrieve encrypted session data
+  def initialize(session)
+    @session = session
+  end
 
-    def self.wipe_redis_sessions 
-        redis = Redis.new(url: @redis_url)
-        redis.keys.each {|session_id| redis.del session_id}
-    end 
+  def set(key, value)
+    @session[key] = SecureMessage.encrypt(value).to_s
+  end
 
-    def initialize(session)
-        @session = session
-    end 
+  def get(key)
+    return nil unless @session && @session[key]
 
-    def set(key, value)
-        @session[key] = SecureMessage.encrypt(value).to_s
-    end 
+    SecureMessage.new(@session[key]).decrypt
+  end
 
-    def get(key)
-        return nil unless @session && @session[key]
-        SecureMessage.new(@session[key]).decrypt
-    end 
-
-    def delete(key)
-        @session.delete(key)
-    end 
-end 
-
+  def delete(key)
+    @session.delete(key)
+  end
+  
+  ## wipe redis session
+  def self.wipe_redis_sessions 
+    redis = Redis.new(url: @redis_url)
+    redis.keys.each {|session_id| redis.del session_id}
+  end 
+end
