@@ -31,4 +31,10 @@ class SecureSession
   def delete(key)
     @session.delete(key)
   end
+  
+  ## wipe redis session
+  def self.wipe_redis_sessions 
+    redis = Redis.new(url: @redis_url)
+    redis.keys.each {|session_id| redis.del session_id}
+  end 
 end
