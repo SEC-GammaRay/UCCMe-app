@@ -4,6 +4,7 @@ require 'delegate'
 require 'roda'
 require 'figaro'
 require 'logger'
+require 'rack/session/redis'
 # require 'rack/ssl-enforcer'
 require 'rack/session'
 require_relative '../require_app'
@@ -36,26 +37,17 @@ module UCCMe
 
     # Sesssion configuration
     ONE_MONTH = 60 * 60 * 24 * 30
-    @redis_url = ENV.delete('REDISCLOUD_URL')
     SecureMessage.setup(ENV.delete('MSG_KEY')) 
-
-    use Rack::Session::Cookie,
-        expire_after: ONE_MONTH,
-        secret: config.SESSION_SECRET
-    
-    @redis_url = ENV.delete('REDISCLOUD_URL')
-    SecureSession.setup(@redis_url)
+    SecureSession.setup(ENV.delete('REDISCLOUD_URL'))
 
     configure :development, :test do 
+      # use Rack::Session::Cookie,
+      #   expire_after: ONE_MONTH,
+      #   secret: config.SESSION_SECRET
+
       use Rack::Session::Pool,
         expire_after: ONE_MONTH
     end 
-
-    configure :production do 
-      use Rack::Session::Redis, 
-        redis_server: @redis_url, 
-        expire_after: ONE_MONTH
-    end
 
     # Console/Pry configuration
     configure :development, :test do
@@ -69,6 +61,9 @@ module UCCMe
 
     configure :production do
       # use Rack::SslEnforcer, hsts: true
+      use Rack::Session::Redis, 
+        redis_server: config.REDISCLOUD_URL, 
+        expire_after: ONE_MONTH
     end
   end
 end
