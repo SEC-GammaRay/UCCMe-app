@@ -161,6 +161,7 @@ DEPENDENCIES
   rake
   rbnacl
   redis-rack
+  redis-store
   rerun
   roda
   rubocop
