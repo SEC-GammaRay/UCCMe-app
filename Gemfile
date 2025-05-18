@@ -7,6 +7,7 @@ ruby File.read('.ruby-version').strip
 # gem 'erb', '~> 4.0', '>= 4.0.4'
 gem 'puma'
 gem 'rack-session', '>= 2.1.1'
+gem 'redis-store'
 gem 'roda'
 gem 'slim'
 
