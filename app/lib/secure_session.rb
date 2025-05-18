@@ -4,6 +4,10 @@ require_relative 'secure_message'
 
 # Encrypt and Decrypt JSON encoded sessions
 class SecureSession
+  ## Setup Redis URL
+  def self.setup(redis_url)
+    @redis_url = redis_url
+  end
 
   ## Class methods to create and retrieve cookie salt
   SESSION_SECRET_BYTES = 64
@@ -37,4 +41,5 @@ class SecureSession
     redis = Redis.new(url: @redis_url)
     redis.keys.each {|session_id| redis.del session_id}
   end 
+
 end
