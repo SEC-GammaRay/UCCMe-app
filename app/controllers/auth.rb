@@ -40,6 +40,42 @@ module UCCMe
           routing.redirect @login_route
         end
       end
+      
+      @register_route = '/auth/register'
+      routing.on 'register' do 
+        routing.is do 
+          # GET /auth/register 
+          routing.get do 
+            view :register 
+          end 
+
+          # POST /auth/register
+          routing.post do 
+            account_data = routing.params.transform_keys(&:to_sym)
+            VerifyRegistration.new(App.config).call(account_data)
+
+            flash[:notice] = 'Please check your email to confirm your account'
+            routing.redirect '/'
+          rescure VerifyRegistration::ApiServerError => e
+            App.logger.warn "API server error: #{e.inspect}\n #{e.backtrace}"
+            flash[:error] = 'Our server is currently unavailable. Please try again later.'
+            routing.redirect @register_route
+          rescue StandardError => e
+            App.logger.error "Could not process registration: #{e.inspect}"
+            flash[:error] = 'Registration failed. Please try again.'
+            routing.redirect @register_route
+          end
+        end 
+      
+        # GET /auth/register/<token>
+        routing.get(String) do |registration_token|
+          flash.now[:notice] = 'Email Verified! Please enter password.'
+          new_account = SecureMessage.new(registration_token).decrypt
+          view :register_confirm, 
+            locals: { new_account:,
+                     registration_token: }
+        end 
+      end 
     end
   end
 end
