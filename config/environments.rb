@@ -37,17 +37,17 @@ module UCCMe
 
     # Sesssion configuration
     ONE_MONTH = 60 * 60 * 24 * 30
-    SecureMessage.setup(ENV.delete('MSG_KEY')) 
+    SecureMessage.setup(ENV.delete('MSG_KEY'))
     SecureSession.setup(ENV.delete('REDISCLOUD_URL'))
 
-    configure :development, :test do 
+    configure :development, :test do
       # use Rack::Session::Cookie,
       #   expire_after: ONE_MONTH,
       #   secret: config.SESSION_SECRET
 
       use Rack::Session::Pool,
-        expire_after: ONE_MONTH
-    end 
+          expire_after: ONE_MONTH
+    end
 
     # Console/Pry configuration
     configure :development, :test do
@@ -61,9 +61,9 @@ module UCCMe
 
     configure :production do
       # use Rack::SslEnforcer, hsts: true
-      use Rack::Session::Redis, 
-        redis_server: config.REDISCLOUD_URL, 
-        expire_after: ONE_MONTH
+      use Rack::Session::Redis,
+          redis_server: config.REDISCLOUD_URL,
+          expire_after: ONE_MONTH
     end
   end
 end

@@ -6,7 +6,8 @@ require_relative 'secure_message'
 class SecureSession
   ## Setup Redis URL
   def self.setup(redis_url)
-    raise "REDISCLOUD_URL is not set" if redis_url.nil? || redis_url.empty?
+    raise 'REDISCLOUD_URL is not set' if redis_url.nil? || redis_url.empty?
+
     @redis = Redis.new(url: redis_url)
   end
 
@@ -36,12 +37,13 @@ class SecureSession
   def delete(key)
     @session.delete(key)
   end
-  
+
   ## wipe redis session
   def self.wipe_redis_sessions
-    raise "Redis not initialized" unless @redis
-    count = @redis.hlen("rack:session")
-    @redis.del("rack:session")
+    raise 'Redis not initialized' unless @redis
+
+    count = @redis.hlen('rack:session')
+    @redis.del('rack:session')
     count
   end
 end
