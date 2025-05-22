@@ -5,8 +5,10 @@ ruby File.read('.ruby-version').strip
 
 # web
 # gem 'erb', '~> 4.0', '>= 4.0.4'
+gem 'logger'
 gem 'puma'
 gem 'rack-session', '>= 2.1.1'
+gem 'redis-rack'
 gem 'redis-store'
 gem 'roda'
 gem 'slim'
@@ -17,6 +19,7 @@ gem 'rake'
 
 # communication
 gem 'http'
+gem 'redis'
 
 # security
 gem 'rack-ssl-enforcer'
@@ -24,13 +27,13 @@ gem 'rbnacl' # assumes libsodium package already installed
 
 # encoding
 gem 'base64'
+gem 'json'
 
 # debugging
 gem 'pry'
 
 # development
 group :development do
-  gem 'redis-rack'
   gem 'rubocop'
   gem 'rubocop-minitest'
   gem 'rubocop-performance'
