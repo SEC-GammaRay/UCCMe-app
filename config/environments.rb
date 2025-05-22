@@ -5,7 +5,7 @@ require 'roda'
 require 'figaro'
 require 'logger'
 require 'rack/session/redis'
-# require 'rack/ssl-enforcer'
+require 'rack/ssl-enforcer'
 require 'rack/session'
 require_relative '../require_app'
 require_relative '../app/lib/secure_session'
@@ -60,7 +60,7 @@ module UCCMe
     end
 
     configure :production do
-      # use Rack::SslEnforcer, hsts: true
+      use Rack::SslEnforcer, hsts: true
       use Rack::Session::Redis,
           redis_server: config.REDISCLOUD_URL,
           expire_after: ONE_MONTH
