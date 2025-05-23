@@ -16,14 +16,21 @@ module UCCMe
 
         # POST /auth/login
         routing.post do
-          account = AuthenticateAccount.new(App.config).call(
+          account_info = AuthenticateAccount.new(App.config).call(
             username: routing.params['username'],
             password: routing.params['password']
           )
 
+          current_account = Account.new(
+            account_info[:account],
+            account_info[:auth_token]
+          )
+
           # session[:current_account] = account
-          SecureSession.new(session).set(:current_account, account)
-          flash[:notice] = "Welcome back #{account['username']}!"
+          SecureSession.new(session).set(:account, current_account.account_info)
+          SecureSession.new(session).set(:auth_token, current_account.auth_token)
+
+          flash[:notice] = "Welcome back #{current_account.username}!"
           routing.redirect '/'
         rescue StandardError => e
           puts "❌ AUTH ERROR: #{e.class} - #{e.message}"
