@@ -1,0 +1,15 @@
+div class="row" style="vertical-align: bottom;"
+  div class="col-xs-9"
+    h3 class="mt-3" All Folders
+  div class="col-xs-3"
+table class="table"
+  thead
+    tr
+      th Folder name
+      th Description
+  tbody
+    - folders.all.each do |folder|
+      tr
+        td 
+          a href="/account/folders/#{folder.id}" #{folder.foldername}
+          td #{folder.description}
