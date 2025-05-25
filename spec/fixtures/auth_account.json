@@ -1,0 +1,6 @@
+{"type":"authenticated_account", 
+ "attributes": {
+    "account": {
+        "type":"account", 
+        "attributes": {"id":1, "username":"shou", "email":"shou.liu@gmail.com"}}, 
+    "auth_token":1}}

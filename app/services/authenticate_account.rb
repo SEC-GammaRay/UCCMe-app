@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'http'
-require 'irb'
 
 module UCCMe
   # Returns an authenticated user, or nil
@@ -14,7 +13,7 @@ module UCCMe
     end
 
     def call(username:, password:)
-      response = HTTP.post("#{@config.API_URL}/auth/authenticate", 
+      response = HTTP.post("#{@config.API_URL}/auth/authenticate",
                            json: { username:, password: })
 
       raise(UnauthorizedError) if response.code == 403
