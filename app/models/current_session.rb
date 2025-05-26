@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative './account'
+require_relative 'account'
 
-module Credence
+module UCCMe
   # Managing session information
   class CurrentSession
     def initialize(session)

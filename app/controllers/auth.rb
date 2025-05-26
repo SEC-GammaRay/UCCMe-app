@@ -33,7 +33,6 @@ module UCCMe
 
           flash[:notice] = "Welcome back #{current_account.username}!"
           routing.redirect '/'
-
         rescue AuthenticateAccount::UnauthorizedError
           flash.now[:error] = 'Username and password did not match our records'
           response.status = 401
@@ -77,7 +76,7 @@ module UCCMe
 
             flash[:notice] = 'Please check your email to confirm your account'
             routing.redirect '/'
-            rescure VerifyRegistration::ApiServerError => e
+          rescue VerifyRegistration::ApiServerError => e
             App.logger.warn "API server error: #{e.inspect}\n #{e.backtrace}"
             flash[:error] = 'Our server is currently unavailable. Please try again later.'
             routing.redirect @register_route
