@@ -26,24 +26,38 @@ module UCCMe
             account_info[:auth_token]
           )
 
+          CurrentSession.new(session).current_account = current_account
           # session[:current_account] = account
-          SecureSession.new(session).set(:account, current_account.account_info)
-          SecureSession.new(session).set(:auth_token, current_account.auth_token)
+          # SecureSession.new(session).set(:account, current_account.account_info)
+          # SecureSession.new(session).set(:auth_token, current_account.auth_token)
 
           flash[:notice] = "Welcome back #{current_account.username}!"
           routing.redirect '/'
-        rescue StandardError => e
-          puts "❌ AUTH ERROR: #{e.class} - #{e.message}"
-          flash.now[:error] = 'Username or password is incorrect'
-          response.status = 400
+
+        rescue AuthenticateAccount::UnauthorizedError
+          flash.now[:error] = 'Username and password did not match our records'
+          response.status = 401
           view :login
+        rescue AuthenticateAccount::ApiServerError => e
+          App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
+          flash[:error] = 'Our servers are not responding -- please try later'
+          response.status = 500
+          routing.redirect @login_route
         end
+        # rescue StandardError => e
+        #   puts "❌ AUTH ERROR: #{e.class} - #{e.message}"
+        #   flash.now[:error] = 'Username or password is incorrect'
+        #   response.status = 400
+        #   view :login
+        # end
       end
 
       routing.on 'logout' do
         routing.get do
           # session[:current_account] = nil
-          SecureSession.new(session).delete(:current_account)
+          # SecureSession.new(session).delete(:current_account)
+          CurrentSession.new(session).delete
+          flash[:notice] = "You've been logged out"
           routing.redirect @login_route
         end
       end

@@ -1,2 +1,6 @@
-_*
+db/local/*
+
 config/secrets.yml
+
+# Ignore macOS system files
+.DS_Store
