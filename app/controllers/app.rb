@@ -15,10 +15,11 @@ module UCCMe
 
     route do |routing|
       response['Content-Type'] = 'text/html; charset=utf-8'
-      @current_account = Account.new(
-        SecureSession.new(session).get(:account),
-        SecureSession.new(session).get(:auth_token)
-      )
+      @current_account = CurrentSession.new(session).current_account
+      # @current_account = Account.new(
+      #   SecureSession.new(session).get(:account),
+      #   SecureSession.new(session).get(:auth_token)
+      # )
 
       routing.public
       routing.assets
