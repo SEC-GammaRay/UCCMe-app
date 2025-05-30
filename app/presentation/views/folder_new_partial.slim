@@ -1,0 +1,11 @@
+div id="newFolderModal" class="modal fade" role="dialog"
+  div class="modal-dialog"
+    div class="modal-content"
+      div class="modal-header"
+        h4 class="modal-title" New Folder
+        button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+      div class="modal-body"
+        form role="form" action="/projects" method='post' id='new-folder-form'
+          div class="form-group"
+            label for='name_input' Folder Name:
+            input type='text' name='name' id='name_input' class="form-control" placeholder="name is required"
