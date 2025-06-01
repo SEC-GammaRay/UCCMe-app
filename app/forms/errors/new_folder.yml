@@ -1,0 +1,4 @@
+en:
+  errors:
+    foldername: 'Provide folder name with up to 50 characters (letters, numbers, hyphens, and underscores only)'
+    description: 'Description must be 200 characters or less'
