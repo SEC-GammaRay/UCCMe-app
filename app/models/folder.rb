@@ -1,14 +1,50 @@
 # frozen_string_literal: true
 
+require 'ostruct'
+
 module UCCMe
   # Behavior of the currently logged in account
   class Folder
     attr_reader :id, :foldername, :description
 
     def initialize(folder_info)
-      @id = folder_info['attributes']['id']
-      @foldername = folder_info['attributes']['foldername']
-      @description = folder_info['attributes']['description']
+      process_attriutes(folder_info['attributes'])
+      process_relationships(folder_info['relationships'])
+      process_policies(folder_info['policies'])
+    end
+
+    private
+
+    def process_attributes(attributes)
+      @id = attributes['id']
+      @foldername = folder_info['foldername']
+      @description = folder_info['description']
+    end
+
+    def process_relationships(relationships)
+      return unless relationships
+
+      @owner = Account.new(relationships['owner'])
+      @collaborators = process_collaborators(relationships['collaborators'])
+      @documents = process_documents(relationships['documents'])
+    end
+
+    # rubocop:disable Style/OpenStructUse
+    def process_policies(policies)
+      @policies = OpenStruct.new(policies)
+    end
+    # rubocop:enable Style/OpenStructUse
+
+    def process_documents(documents_info)
+      return nil unless documents_info
+
+      documents_info.map { |doc_info| Document.new(doc_info) }
+    end
+
+    def process_collaborators(collaborators)
+      return nil unless collaborators
+
+      collaborators.map { |account_info| Account.new(account_info) }
     end
   end
 end
