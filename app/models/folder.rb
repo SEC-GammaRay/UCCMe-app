@@ -8,7 +8,7 @@ module UCCMe
     attr_reader :id, :foldername, :description
 
     def initialize(folder_info)
-      process_attriutes(folder_info['attributes'])
+      process_attributes(folder_info['attributes'])
       process_relationships(folder_info['relationships'])
       process_policies(folder_info['policies'])
     end
@@ -17,8 +17,8 @@ module UCCMe
 
     def process_attributes(attributes)
       @id = attributes['id']
-      @foldername = folder_info['foldername']
-      @description = folder_info['description']
+      @foldername = attributes['foldername']
+      @description = attributes['description']
     end
 
     def process_relationships(relationships)
