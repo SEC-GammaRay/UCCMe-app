@@ -19,9 +19,8 @@ module UCCMe
 
         # POST /account/<registration_token>
         routing.post String do |registration_token|
-          raise 'Passwords do not match or empty' if
-            routing.params['password'].empty? ||
-            routing.params['password'] != routing.params['password_confirm']
+          passwords = Form::Passwords.new.call(routing.params)
+          raise Form.message_values(passwords) if passwords.failure?
 
           new_account = SecureMessage.new(registration_token).decrypt
           CreateAccount.new(App.config).call(
