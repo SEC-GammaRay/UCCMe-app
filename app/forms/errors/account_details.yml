@@ -1,0 +1,4 @@
+en:
+  errors:
+    username: 'Username must be at least three English letters and numbers, with dots and underscores allowed in-between'
+    email: 'Please provide a valid email address'
