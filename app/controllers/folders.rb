@@ -13,23 +13,23 @@ module UCCMe
         routing.on(String) do |folder_id|
           @folder_route = "#{@folders_route}/#{folder_id}"
 
-        # GET /folders/[folder_id]
-        routing.get do
-          # if @current_account.logged_in?
-          folder_list = GetAllFolders.new(App.config).call(@current_account)
+          # GET /folders/[folder_id]
+          routing.get do
+            # if @current_account.logged_in?
+            folder_list = GetAllFolders.new(App.config).call(@current_account)
 
-          folders = Folders.new(folder_list)
+            folders = Folders.new(folder_list)
 
-          view :folders_all, locals: { 
-            current_account: @current_account, folders: folders 
-          }
-          # else
-          #   routing.redirect '/auth/login'
-        rescue StandardError => e
-          puts "#{e.inspect}\n#{e.backtrace}"
-          flash[:error] = 'Folder not found'
-          routing.redirect @folders_route
-        end
+            view :folders_all, locals: {
+              current_account: @current_account, folders: folders
+            }
+            # else
+            #   routing.redirect '/auth/login'
+          rescue StandardError => e
+            puts "#{e.inspect}\n#{e.backtrace}"
+            flash[:error] = 'Folder not found'
+            routing.redirect @folders_route
+          end
 
           # POST /folders/[folder_id]/collaborators
           routing.post('collaborators') do
@@ -74,9 +74,9 @@ module UCCMe
               file_data: file_data.to_h
             )
             flash[:notice] = 'Your file was added'
-          rescue StandardError => error
-            puts error.inspect
-            puts error.backtrace
+          rescue StandardError => e
+            puts e.inspect
+            puts e.backtrace
             flash[:error] = 'Could not add file'
           ensure
             routing.redirect @folder_route

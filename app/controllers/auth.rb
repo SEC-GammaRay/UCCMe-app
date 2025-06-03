@@ -21,9 +21,9 @@ module UCCMe
             flash[:error] = 'Please enter both username and password'
             routing.redirect @login_route
           end
-          
+
           authenticated = AuthenticateAccount.new(App.config)
-            .call(**credentials.values)
+                                             .call(**credentials.values)
           #   username: routing.params['username'],
           #   password: routing.params['password']
           # )

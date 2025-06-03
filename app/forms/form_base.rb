@@ -5,11 +5,11 @@ require 'dry-validation'
 module UCCMe
   # Form helpers
   module Form
-    USERNAME_REGEX = /^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/.freeze
-    EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i.freeze
-    FOLDERNAME_REGEX = /^[a-zA-Z0-9_\-\s]+$/.freeze
-    FILENAME_REGEX = /^[a-zA-Z0-9._\-\s]+\.[a-zA-Z0-9]+$/.freeze
-    PATH_REGEX = /^[a-zA-Z0-9._\-\/\s]*$/.freeze
+    USERNAME_REGEX = /^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/
+    EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
+    FOLDERNAME_REGEX = /^[a-zA-Z0-9_\-\s]+$/
+    FILENAME_REGEX = /^[a-zA-Z0-9._\-\s]+\.[a-zA-Z0-9]+$/
+    PATH_REGEX = %r{^[a-zA-Z0-9._\-/\s]*$}
 
     def self.validation_errors(validation)
       validation.errors.to_h.map { |k, v| [k, v].join(' ') }.join('; ')
