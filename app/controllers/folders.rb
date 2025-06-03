@@ -15,13 +15,14 @@ module UCCMe
 
           # GET /folders/[folder_id]
           routing.get do
-            # if @current_account.logged_in?
-            folder_list = GetAllFolders.new(App.config).call(@current_account)
+            folder_info = GetFolder.new(App.config).call(
+              @current_account, folder_id
+            )
 
-            folders = Folders.new(folder_list)
+            folder = Folder.new(folder_info)
 
-            view :folders_all, locals: {
-              current_account: @current_account, folders: folders
+            view :folder, locals: {
+              current_account: @current_account, folder: folder
             }
             # else
             #   routing.redirect '/auth/login'

@@ -5,7 +5,8 @@ require 'ostruct'
 module UCCMe
   # Behavior of the currently logged in account
   class Folder
-    attr_reader :id, :foldername, :description
+    attr_reader :id, :foldername, :description, # basic info
+                :owner, :collaborators, :stored_files, :policies # full details
 
     def initialize(folder_info)
       process_attributes(folder_info['attributes'])
@@ -26,7 +27,7 @@ module UCCMe
 
       @owner = Account.new(relationships['owner'])
       @collaborators = process_collaborators(relationships['collaborators'])
-      @documents = process_documents(relationships['documents'])
+      @stored_files = process_files(relationships['stored_files'])
     end
 
     # rubocop:disable Style/OpenStructUse
@@ -35,10 +36,10 @@ module UCCMe
     end
     # rubocop:enable Style/OpenStructUse
 
-    def process_documents(documents_info)
-      return nil unless documents_info
+    def process_files(files_info)
+      return nil unless files_info
 
-      documents_info.map { |doc_info| Document.new(doc_info) }
+      files_info.map { |file_info| StoredFile.new(file_info) }
     end
 
     def process_collaborators(collaborators)

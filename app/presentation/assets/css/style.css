@@ -13,6 +13,12 @@
   padding: 0;
 }
 
+li.list-group-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 @media (min-width: 576px) {
   .collapse.nabar-collapse {
     display: block;
