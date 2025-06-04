@@ -19,6 +19,12 @@ li.list-group-item {
   justify-content: space-between;
 }
 
+#previous_page {
+  color: #2fa4e7;
+  font-size: 30px;
+  transform: scaleX(-1);
+}
+
 @media (min-width: 576px) {
   .collapse.nabar-collapse {
     display: block;

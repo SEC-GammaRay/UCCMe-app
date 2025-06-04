@@ -100,7 +100,7 @@ module UCCMe
           puts "FOLDER: #{routing.params}"
           folder_data = Form::NewFolder.new.call(routing.params)
           if folder_data.failure?
-            flash[:error] = Form.message_values(folder_data)
+            flash[:error] = Form.Form.validation_errors(folder_data)
             routing.halt
           end
 
