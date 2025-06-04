@@ -17,8 +17,8 @@ module UCCMe
         view :file, locals: {
           current_account: @current_account, file: file
         }
-      rescue StandardError => e
-        puts "#{e.inspect}\n#{e.backtrace}"
+      rescue StandardError => error
+        puts "#{error.inspect}\n#{error.backtrace}"
         flash[:error] = 'File not found'
         routing.redirect '/folders'
       end
