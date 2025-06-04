@@ -5,7 +5,8 @@ require_relative 'folder'
 module UCCMe
   # Behaviors of the currently logged in account
   class StoredFile
-    attr_reader :id, :filename, :description, :content, :cc_types
+    attr_reader :id, :filename, :description, :content, :cc_types, # basic info
+                :folder # full details
 
     def initialize(info)
       process_attributes(info['attributes'])

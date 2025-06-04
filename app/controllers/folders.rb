@@ -26,8 +26,8 @@ module UCCMe
             }
             # else
             #   routing.redirect '/auth/login'
-          rescue StandardError => e
-            puts "#{e.inspect}\n#{e.backtrace}"
+          rescue StandardError => error
+            puts "#{error.inspect}\n#{error.backtrace}"
             flash[:error] = 'Folder not found'
             routing.redirect @folders_route
           end
@@ -75,9 +75,9 @@ module UCCMe
               file_data: file_data.to_h
             )
             flash[:notice] = 'Your file was added'
-          rescue StandardError => e
-            puts e.inspect
-            puts e.backtrace
+          rescue StandardError => error
+            puts error.inspect
+            puts error.backtrace
             flash[:error] = 'Could not add file'
           ensure
             routing.redirect @folder_route
@@ -109,8 +109,8 @@ module UCCMe
             folder_data: folder_data.to_h
           )
           flash[:notice] = 'Add files and collaborators to your new folder'
-        rescue StandardError => e
-          puts "FAILURE Creating Folder: #{e.inspect}"
+        rescue StandardError => error
+          puts "FAILURE Creating Folder: #{error.inspect}"
           flash[:error] = 'Could not create folder'
         ensure
           routing.redirect @folders_route
