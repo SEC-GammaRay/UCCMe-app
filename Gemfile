@@ -49,7 +49,7 @@ group :test do
 end
 
 group :development, :test do
-  gem 'rack', '>= 3.1.14'
+  gem 'rack', '>= 3.1.16'
   gem 'rack-test'
   gem 'rerun'
 end
