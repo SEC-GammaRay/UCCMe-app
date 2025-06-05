@@ -30,11 +30,11 @@ module UCCMe
           )
           flash[:notice] = 'Account created! Please login'
           routing.redirect '/auth/login'
-        rescue CreateAccount::InvalidAccount => e
-          flash[:error] = e.message
+        rescue CreateAccount::InvalidAccount => error
+          flash[:error] = error.message
           routing.redirect '/auth/register'
-        rescue StandardError => e
-          flash[:error] = e.message
+        rescue StandardError => error
+          flash[:error] = error.message
           routing.redirect(
             "#{App.config.APP_URL}/auth/register/#{registration_token}"
           )

@@ -26,7 +26,7 @@ describe 'Test Service Objects' do
 
       auth = UCCMe::AuthenticateAccount.new(app.config).call(**@owners)
 
-      account = auth[:account]
+      account = auth[:account]['attributes']
       _(account).wont_be_nil
       _(account['username']).must_equal @api_account[:username]
       _(account['email']).must_equal @api_account[:email]

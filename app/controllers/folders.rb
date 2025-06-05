@@ -13,23 +13,24 @@ module UCCMe
         routing.on(String) do |folder_id|
           @folder_route = "#{@folders_route}/#{folder_id}"
 
-        # GET /folders/[folder_id]
-        routing.get do
-          # if @current_account.logged_in?
-          folder_list = GetAllFolders.new(App.config).call(@current_account)
+          # GET /folders/[folder_id]
+          routing.get do
+            folder_info = GetFolder.new(App.config).call(
+              @current_account, folder_id
+            )
 
-          folders = Folders.new(folder_list)
+            folder = Folder.new(folder_info)
 
-          view :folders_all, locals: { 
-            current_account: @current_account, folders: folders 
-          }
-          # else
-          #   routing.redirect '/auth/login'
-        rescue StandardError => e
-          puts "#{e.inspect}\n#{e.backtrace}"
-          flash[:error] = 'Folder not found'
-          routing.redirect @folders_route
-        end
+            view :folder, locals: {
+              current_account: @current_account, folder: folder
+            }
+            # else
+            #   routing.redirect '/auth/login'
+          rescue StandardError => error
+            puts "#{error.inspect}\n#{error.backtrace}"
+            flash[:error] = 'Folder not found'
+            routing.redirect @folders_route
+          end
 
           # POST /folders/[folder_id]/collaborators
           routing.post('collaborators') do
@@ -99,7 +100,7 @@ module UCCMe
           puts "FOLDER: #{routing.params}"
           folder_data = Form::NewFolder.new.call(routing.params)
           if folder_data.failure?
-            flash[:error] = Form.message_values(folder_data)
+            flash[:error] = Form.Form.validation_errors(folder_data)
             routing.halt
           end
 
@@ -108,8 +109,8 @@ module UCCMe
             folder_data: folder_data.to_h
           )
           flash[:notice] = 'Add files and collaborators to your new folder'
-        rescue StandardError => e
-          puts "FAILURE Creating Folder: #{e.inspect}"
+        rescue StandardError => error
+          puts "FAILURE Creating Folder: #{error.inspect}"
           flash[:error] = 'Could not create folder'
         ensure
           routing.redirect @folders_route

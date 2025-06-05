@@ -21,9 +21,9 @@ module UCCMe
             flash[:error] = 'Please enter both username and password'
             routing.redirect @login_route
           end
-          
+
           authenticated = AuthenticateAccount.new(App.config)
-            .call(**credentials.values)
+                                             .call(**credentials.values)
           #   username: routing.params['username'],
           #   password: routing.params['password']
           # )
@@ -44,8 +44,8 @@ module UCCMe
           flash.now[:error] = 'Username and password did not match our records'
           response.status = 401
           view :login
-        rescue AuthenticateAccount::ApiServerError => e
-          App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
+        rescue AuthenticateAccount::ApiServerError => error
+          App.logger.warn "API server error: #{error.inspect}\n#{error.backtrace}"
           flash[:error] = 'Our servers are not responding -- please try later'
           response.status = 500
           routing.redirect @login_route
@@ -88,12 +88,12 @@ module UCCMe
 
             flash[:notice] = 'Please check your email to confirm your account'
             routing.redirect '/'
-          rescue VerifyRegistration::ApiServerError => e
-            App.logger.warn "API server error: #{e.inspect}\n #{e.backtrace}"
+          rescue VerifyRegistration::ApiServerError => error
+            App.logger.warn "API server error: #{error.inspect}\n #{error.backtrace}"
             flash[:error] = 'Our server is currently unavailable. Please try again later.'
             routing.redirect @register_route
-          rescue StandardError => e
-            App.logger.error "Could not process registration: #{e.inspect}"
+          rescue StandardError => error
+            App.logger.error "Could not process registration: #{error.inspect}"
             flash[:error] = 'Registration failed. Please try again.'
             routing.redirect @register_route
           end

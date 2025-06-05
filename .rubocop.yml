@@ -25,3 +25,7 @@ Style/SymbolArray:
   Exclude:
     - db/migrations/**/*
     - rackfile
+
+Naming/RescuedExceptionsVariableName:
+  Enabled: true
+  PreferredName: error

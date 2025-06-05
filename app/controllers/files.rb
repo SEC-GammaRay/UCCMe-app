@@ -13,14 +13,14 @@ module UCCMe
         file_info = GetFile.new(App.config).call(
           @current_account, file_id
         )
-        file = File.new(file_info)
+        file = StoredFile.new(file_info)
         view :file, locals: {
           current_account: @current_account, file: file
         }
-      rescue StandardError => e
-        puts "#{e.inspect}\n#{e.backtrace}"
+      rescue StandardError => error
+        puts "#{error.inspect}\n#{error.backtrace}"
         flash[:error] = 'File not found'
-        routing.redirect '/folders'
+        routing.redirect routing.referer || '/folders'
       end
     end
   end

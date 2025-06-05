@@ -1,0 +1,28 @@
+
+div class="d-flex"
+  div
+    a href="/folders" 
+      i class="fa-solid fa-share mt-3 me-2" id="previous_page"
+  h2 class="mt-3"
+    a href="/folders/#{file.folder.id}" #{file.folder.foldername}
+
+h3 File: #{file.filename}
+
+dl
+  div class="row"
+    div class="col-xs-3"
+      dt Description:
+    div class="col-xs-9"
+      dd class="blockquote" #{file.description}
+    div class="col-xs-3"
+      dt File type:
+    div class="col-xs-9"
+      dd class="blockquote" #{file.cc_types}
+    div class="col-xs-3"
+      dt File: 
+    div class="col-xs-9"
+      dd class="blockquote"
+        a data-bs-toggle="collapse" href="#file" aria-expanded="false" aria-controls="file" show file
+        div id="file" class="collapse"
+          dov class="card card-body"
+            pre class="force-wrap" #{file.content}
