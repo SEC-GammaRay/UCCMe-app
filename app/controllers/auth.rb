@@ -24,9 +24,6 @@ module UCCMe
 
           authenticated = AuthenticateAccount.new(App.config)
                                              .call(**credentials.values)
-          #   username: routing.params['username'],
-          #   password: routing.params['password']
-          # )
 
           current_account = Account.new(
             authenticated[:account],
@@ -34,9 +31,6 @@ module UCCMe
           )
 
           CurrentSession.new(session).current_account = current_account
-          # session[:current_account] = account
-          # SecureSession.new(session).set(:account, current_account.account_info)
-          # SecureSession.new(session).set(:auth_token, current_account.auth_token)
 
           flash[:notice] = "Welcome back #{current_account.username}!"
           routing.redirect '/'
@@ -50,18 +44,11 @@ module UCCMe
           response.status = 500
           routing.redirect @login_route
         end
-        # rescue StandardError => e
-        #   puts "❌ AUTH ERROR: #{e.class} - #{e.message}"
-        #   flash.now[:error] = 'Username or password is incorrect'
-        #   response.status = 400
-        #   view :login
-        # end
       end
 
-      routing.on '/auth/logout' do
-        routing.is 'logout' do
-          # session[:current_account] = nil
-          # SecureSession.new(session).delete(:current_account)
+      @logout_route = '/auth/logout'
+      routing.is 'logout' do
+        routing.get do
           CurrentSession.new(session).delete
           flash[:notice] = "You've been logged out"
           routing.redirect @login_route
