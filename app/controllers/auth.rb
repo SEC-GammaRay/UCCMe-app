@@ -46,8 +46,9 @@ module UCCMe
         end
       end
 
-      routing.on '/auth/logout' do
-        routing.is 'logout' do
+      @logout_route = '/auth/logout'
+      routing.is 'logout' do
+        routing.get do
           CurrentSession.new(session).delete
           flash[:notice] = "You've been logged out"
           routing.redirect @login_route
