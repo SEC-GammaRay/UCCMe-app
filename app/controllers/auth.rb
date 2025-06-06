@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'roda'
 require_relative 'app'
 
@@ -55,7 +53,7 @@ module UCCMe
           CurrentSession.new(session).current_account = current_account
 
           flash[:notice] = "Welcome back #{current_account.username}!"
-          routing.redirect '/'
+          routing.redirect '/folders'
         rescue AuthenticateAccount::UnauthorizedError
           flash.now[:error] = 'Username and password did not match our records'
           response.status = 401
