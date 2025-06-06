@@ -7,6 +7,9 @@ require_relative 'app'
 module UCCMe
   # Web controller for UCCMe API
   class App < Roda
+    plugin :flash # Ensure flash plugin is enabled for flash messages
+    plugin :render # Ensure render plugin is enabled for views
+
     def google_oauth_url(config)
       url = config.GOOGLE_OAUTH_URL
       client_id = config.GOOGLE_CLIENT_ID
@@ -37,11 +40,34 @@ module UCCMe
           }
         end
 
-        # POST /auth/login
-        routing.post do
-          credentials = Form::LoginCredentials.new.call(routing.params)
-          if credentials.failure?
-            flash[:error] = 'Please enter both username and password'
+        # GET /auth/login
+        routing.is 'login' do
+          routing.get do
+            view :login, locals: { google_oauth_url: google_oauth_url(App.config) }
+          end
+
+          # POST /auth/login
+          routing.post do
+            credentials = Form::LoginCredentials.new.call(routing.params)
+            if credentials.failure?
+              flash[:error] = 'Please enter both username and password'
+              routing.redirect @login_route
+            end
+
+            authenticated = AuthenticateAccount.new(App.config).call(**credentials.values)
+            current_account = Account.new(authenticated[:account], authenticated[:auth_token])
+            CurrentSession.new(session).current_account = current_account
+
+            flash[:notice] = "Welcome back #{current_account.username}!"
+            routing.redirect '/folders'
+          rescue AuthenticateAccount::UnauthorizedError
+            flash.now[:error] = 'Username and password did not match our records'
+            response.status = 401
+            view :login
+          rescue AuthenticateAccount::ApiServerError => error
+            App.logger.warn "API server error: #{error.inspect}\n#{error.backtrace}"
+            flash[:error] = 'Our servers are not responding -- please try later'
+            response.status = 500
             routing.redirect @login_route
           end
 
@@ -118,12 +144,64 @@ module UCCMe
           view :register
         end
 
-        # POST /auth/register
-        routing.post do
-          registration = Form::Registration.new.call(routing.params)
-          if registration.failure?
-            flash[:error] = Form.validation_errors(registration)
-            routing.redirect @register_route
+        # GET /auth/sso_callback
+        routing.is 'sso_callback' do
+          routing.get do
+            authorized = AuthorizeGoogleAccount.new(App.config).call(routing.params['code'])
+            current_account = Account.new(authorized[:account], authorized[:auth_token])
+            CurrentSession.new(session).current_account = current_account
+
+            flash[:notice] = "Welcome #{current_account.username}!"
+            routing.redirect '/'
+          rescue AuthorizeGoogleAccount::UnauthorizedError
+            flash[:error] = 'Could not login with Google'
+            response.status = 403
+            routing.redirect @login_route
+          rescue StandardError => e
+            App.logger.error "SSO callback error: #{e.inspect}\n#{e.backtrace}"
+            flash[:error] = 'Our servers are not responding -- please try later'
+            response.status = 500
+            routing.redirect @login_route
+          end
+        end
+
+        # /auth/logout
+        routing.on 'logout' do
+          routing.is do
+            CurrentSession.new(session).delete
+            flash[:notice] = "You've been logged out"
+            routing.redirect @login_route
+          end
+        end
+
+        # /auth/register
+        routing.on 'register' do
+          routing.is do
+            # GET /auth/register
+            routing.get do
+              view :register
+            end
+
+            # POST /auth/register
+            routing.post do
+              registration = Form::Registration.new.call(routing.params)
+              if registration.failure?
+                flash[:error] = Form.validation_errors(registration)
+                routing.redirect @register_route
+              end
+
+              VerifyRegistration.new(App.config).call(registration)
+              flash[:notice] = 'Please check your email to confirm your account'
+              routing.redirect '/'
+            rescue VerifyRegistration::ApiServerError => error
+              App.logger.warn "API server error: #{error.inspect}\n#{error.backtrace}"
+              flash[:error] = 'Our server is currently unavailable. Please try again later.'
+              routing.redirect @register_route
+            rescue StandardError => error
+              App.logger.error "Could not process registration: #{error.inspect}\n#{error.backtrace}"
+              flash[:error] = 'Registration failed. Please try again.'
+              routing.redirect @register_route
+            end
           end
 
           VerifyRegistration.new(App.config).call(registration)
