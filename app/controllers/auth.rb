@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 require 'roda'
 require_relative 'app'
 
+# rubocop:disable Metrics/ClassLength
 module UCCMe
   # Web controller for UCCMe API
   class App < Roda
@@ -29,7 +32,7 @@ module UCCMe
       routing.is 'login' do
         # GET /auth/login
         routing.get do
-          view :login, locals:{
+          view :login, locals: {
             google_oauth_url: google_oauth_url(App.config)
           }
         end
@@ -65,6 +68,7 @@ module UCCMe
           routing.redirect @login_route
         end
       end
+    end
 
       @oauth_callback = '/auth/sso_callback'
       routing.is 'sso_callback' do
@@ -82,8 +86,49 @@ module UCCMe
             authorized[:auth_token]
           )
 
-          CurrentSession.new(session).current_account = current_account
-          flash[:notice] = "Welcome #{current_account.username}!"
+        CurrentSession.new(session).current_account = current_account
+        flash[:notice] = "Welcome #{current_account.username}!"
+        routing.redirect '/'
+      rescue AuthorizeGoogleAccount::UnauthorizedError
+        flash[:error] = 'Could not login with Google'
+        response.status = 403
+        routing.redirect @login_route
+      rescue StandardError
+        flash[:error] = 'Our servers are not responding -- please try later'
+        response.status = 500
+        routing.redirect @login_route
+      end
+    end
+
+    routing.on '/auth/logout' do
+      routing.is 'logout' do
+        # session[:current_account] = nil
+        # SecureSession.new(session).delete(:current_account)
+        CurrentSession.new(session).delete
+        flash[:notice] = "You've been logged out"
+        routing.redirect @login_route
+      end
+    end
+
+    @register_route = '/auth/register'
+    routing.on 'register' do
+      routing.is do
+        # GET /auth/register
+        routing.get do
+          view :register
+        end
+
+        # POST /auth/register
+        routing.post do
+          registration = Form::Registration.new.call(routing.params)
+          if registration.failure?
+            flash[:error] = Form.validation_errors(registration)
+            routing.redirect @register_route
+          end
+
+          VerifyRegistration.new(App.config).call(registration)
+
+          flash[:notice] = 'Please check your email to confirm your account'
           routing.redirect '/'
         rescue AuthorizeGoogleAccount::UnauthorizedError
           flash[:error] = 'Could not login with Google'
@@ -150,3 +195,4 @@ module UCCMe
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

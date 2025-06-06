@@ -1,23 +1,18 @@
-# frozen_string_literal: true
-
 require 'http'
 
-module UCCMe
-    # Returns an authorized user, or nil 
-    class AuthorizeGoogleAccount 
-        # Error emanating from Google 
-        class UnauthorizedError < StandardError
-            def message
+module UCCMe 
+    # return authenticated google account 
+    class AuthorizeGoogleAccount
+        # Errors from Google 
+        class UnauthorizedError < StandardError 
+            def message 
                 'Could not login with Google'
-            end
-        end
+        end 
+    
 
         def initialize(config)
-            @config = config
-            @client_id = @config.GOOGLE_CLIENT_ID
-            @client_secret = @config.GOOGLE_CLIENT_SECRET
-            @redirect_uri = @config.GOOGLE_REDIRECT_URI
-        end
+            @config = config 
+        end 
 
         def call(code)
             access_token = get_access_token_from_google(code)
