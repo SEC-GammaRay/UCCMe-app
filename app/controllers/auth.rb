@@ -6,12 +6,33 @@ require_relative 'app'
 module UCCMe
   # Web controller for UCCMe API
   class App < Roda
+    def google_oauth_url(config)
+      url = config.GOOGLE_OAUTH_URL
+      client_id = config.GOOGLE_CLIENT_ID
+      scope = config.GOOGLE_SCOPE
+      redirect_uri = config.GOOGLE_REDIRECT_URI
+
+      params = {
+        client_id: client_id,
+        redirect_uri: redirect_uri,
+        scope: scope,
+        response_type: 'code',
+        access_type: 'offline',  
+        prompt: 'consent'        
+      }
+      query_string = params.map { |k, v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
+      
+      "#{url}?#{query_string}"
+    end 
+  
     route('auth') do |routing|
       @login_route = '/auth/login'
       routing.is 'login' do
         # GET /auth/login
         routing.get do
-          view :login
+          view :login, locals: {
+            google_oauth_url: google_oauth_url(App.config)
+          }
         end
 
         # POST /auth/login
@@ -45,6 +66,36 @@ module UCCMe
           routing.redirect @login_route
         end
       end
+
+      @oauth_callback = '/auth/sso_callback'
+      routing.is 'sso_callback' do
+        # GET /auth/sso_callback
+          routing.get do
+          authorized = AuthorizeGoogleAccount
+                       .new(App.config)
+                       .call(routing.params['code'])
+
+          current_account = Account.new(
+            authorized[:account],
+            authorized[:auth_token]
+          )
+
+          CurrentSession.new(session).current_account = current_account
+
+          flash[:notice] = "Welcome #{current_account.username}!"
+          routing.redirect '/projects'
+        rescue AuthorizeGithubAccount::UnauthorizedError
+          flash[:error] = 'Could not login with Google'
+          response.status = 403
+          routing.redirect @login_route
+        rescue StandardError => e
+          puts "SSO LOGIN ERROR: #{e.inspect}\n#{e.backtrace}"
+          flash[:error] = 'Unexpected API Error'
+          response.status = 500
+          routing.redirect @login_route
+        end
+      end
+
 
       @logout_route = '/auth/logout'
       routing.is 'logout' do

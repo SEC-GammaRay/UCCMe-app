@@ -5,7 +5,8 @@ require 'http'
 module UCCMe
   # Returns an authenticated user, or nil
   class AuthenticateAccount
-    class UnauthorizedError < StandardError; end
+    class NotAuthenticatedError < StandardError; end
+    
     class ApiServerError < StandardError; end
 
     def initialize(config)
