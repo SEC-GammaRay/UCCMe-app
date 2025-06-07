@@ -1,14 +1,23 @@
 div class="row"
+  div class="col-sm-1"
   div class="col-sm-4"
-  div class="col-sm-4"
-    h3 class="text-center mt-3" Login 
-    form method="POST" action="/auth/login" id="form-login"
+    h4 class="text-center" Login with credentials
+    form method='post' action='/auth/login' id='form-login' accept-charset="UTF-8"
       div class="form-group"
-        label for="username" Username
-        input type="text" name="username" id="username" class="form-control" required="required"
+        label for='input-username' Username
+        input type='text' name='username' id='input-username' class="form-control"
       div class="form-group"
-        label for="password" Password
-        input type="password" name="password" id="password" class="form-control" required="required"
-
-      button type="submit" id="button-login" value="login" class="btn btn-primary btn-block mt-3" login
-  div class="col-sm-4"
+        label for='input-password' Password
+        input type='password' name='password' id='input-password' class="form-control"
+      
+      button type='submit' id='button-login' value='login' class="btn btn-primary btn-block" login
+  .col-sm-2.text-center
+    h4 or
+  .col-sm-4
+    .row
+      h4.text-center Login with Google
+    .row
+      a class="btn btn-block btn-social btn-github" href=google_oauth_url
+        span class="fab fa-google"
+        == "Google Sign-in"
+  .col-sm-1
