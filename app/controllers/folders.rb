@@ -89,14 +89,10 @@ module UCCMe
           folder_list = GetAllFolders.new(App.config).call(@current_account)
           folders = Folders.new(folder_list)
 
-<<<<<<< HEAD
           view :folders_all, locals: {
             current_account: @current_account, folders: folders
           }
         end
-=======
-            folders = Folder.new(folder_list)
->>>>>>> b63caa0 (fix: fix naming)
 
         # POST /folders/
         routing.post do
