@@ -5,9 +5,9 @@ require 'webmock/minitest'
 
 describe 'Test Service Objects' do
   before do
-    @owners = { username: 'shou', password: 'shouliu' }
-    @mal_accounts = { username: 'shou', password: 'wrongpassword' }
-    @api_account = { username: 'shou', email: 'shou.liu@gmail.com' }
+    @credentials = { username: 'sharon', password: 'mypa$$w0rd' }
+    @mal_credentials = { username: 'sharon', password: 'wrongpassword' }
+    @api_account = { username: 'sharon', email: 'sharon.lin@iss.nthu.edu.tw' }
   end
 
   after do
@@ -18,13 +18,12 @@ describe 'Test Service Objects' do
     it 'HAPPY: should find an authenticated account' do
       auth_account_file = 'spec/fixtures/auth_account.json'
       auth_return_json = File.read(auth_account_file)
-
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @owners.to_json)
+             .with(body: @credentials.to_json)
              .to_return(body: auth_return_json,
                         headers: { 'Content-Type' => 'application/json' })
 
-      auth = UCCMe::AuthenticateAccount.new(app.config).call(**@owners)
+      auth = UCCMe::AuthenticateAccount.new.call(**@credentials)
 
       account = auth[:account]['attributes']
       _(account).wont_be_nil
@@ -34,11 +33,11 @@ describe 'Test Service Objects' do
 
     it 'BAD: should not find a false authenticated account' do
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @mal_accounts.to_json)
-             .to_return(status: 403)
+             .with(body: @mal_credentials.to_json)
+             .to_return(status: 401)
       _(proc {
-        UCCMe::AuthenticateAccount.new(app.config).call(**@mal_accounts)
-      }).must_raise UCCMe::AuthenticateAccount::UnauthorizedError
+        UCCMe::AuthenticateAccount.new.call(**@mal_credentials)
+      }).must_raise UCCMe::AuthenticateAccount::NotAuthenticatedError
     end
   end
 end
