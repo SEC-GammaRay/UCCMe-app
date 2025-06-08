@@ -26,11 +26,12 @@ module UCCMe
     end 
   
     route('auth') do |routing|
+      @oauth_callback = 'auth/sso_callback'
       @login_route = '/auth/login'
       routing.is 'login' do
         # GET /auth/login
         routing.get do
-          view :login, locals: {
+          view :login, locals:{
             google_oauth_url: google_oauth_url(App.config)
           }
         end
@@ -84,7 +85,6 @@ module UCCMe
           )
 
           CurrentSession.new(session).current_account = current_account
-
           flash[:notice] = "Welcome #{current_account.username}!"
           routing.redirect '/'
         rescue AuthorizeGoogleAccount::UnauthorizedError
