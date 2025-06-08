@@ -7,6 +7,7 @@ module UCCMe
         class UnauthorizedError < StandardError 
             def message 
                 'Could not login with Google'
+            end
         end 
     
 
