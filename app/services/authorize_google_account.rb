@@ -4,7 +4,7 @@ require 'http'
 
 module UCCMe
     # Returns an authorized user, or nil 
-    class AuthorizedGoogleAccount 
+    class AuthorizeGoogleAccount 
         # Error emanating from Google 
         class UnauthorizedError < StandardError
             def message
@@ -14,6 +14,9 @@ module UCCMe
 
         def initialize(config)
             @config = config
+            @client_id = @config.GOOGLE_CLIENT_ID
+            @client_secret = @config.GOOGLE_CLIENT_SECRET
+            @redirect_uri = @config.GOOGLE_REDIRECT_URI
         end
 
         def call(code)
@@ -30,6 +33,7 @@ module UCCMe
                         form: { client_id: @config.GOOGLE_CLIENT_ID,
                                 client_secret: @config.GOOGLE_CLIENT_SECRET,
                                 code: code,
+                                redirect_uri: @config.GOOGLE_REDIRECT_URI,
                                 # param required by Google OAuth
                                 grant_type: 'authorization_code' })
             raise UnauthorizedError unless challenge_response.status < 400
@@ -38,9 +42,13 @@ module UCCMe
 
         def get_sso_account_from_api(access_token)
             response =
-                HTTP.post("#{@config.API_URL}/auth/sso",
+                HTTP.post("#{@config.API_URL}/auth/authenticate/sso",
                             json: { access_token: access_token })
-            raise if response.code >= 400
+            if response.code >= 400
+                puts "Error: #{response.code} - #{response.body}" # Log the response
+                raise "Failed to authenticate: #{response.code} - #{response.body}"
+            end
+
 
             account_info = JSON.parse(response)['data']['attributes']
 

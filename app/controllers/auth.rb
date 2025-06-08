@@ -75,6 +75,9 @@ module UCCMe
                        .new(App.config)
                        .call(routing.params['code'])
 
+          puts "Authorized data: #{authorized.inspect}"
+          puts "About to create Account with: #{authorized[:account].inspect}, #{authorized[:auth_token].inspect}"
+
           current_account = Account.new(
             authorized[:account],
             authorized[:auth_token]
@@ -83,8 +86,8 @@ module UCCMe
           CurrentSession.new(session).current_account = current_account
 
           flash[:notice] = "Welcome #{current_account.username}!"
-          routing.redirect '/projects'
-        rescue AuthorizeGithubAccount::UnauthorizedError
+          routing.redirect '/'
+        rescue AuthorizeGoogleAccount::UnauthorizedError
           flash[:error] = 'Could not login with Google'
           response.status = 403
           routing.redirect @login_route
