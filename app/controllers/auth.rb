@@ -1,50 +1,40 @@
 # frozen_string_literal: true
 
 require 'roda'
-require_relative 'app'
+require_relative './app'
 
 module UCCMe
-  # Web controller for UCCMe API
+  # Web controller for UCCMe App
   class App < Roda
-    def google_oauth_url(config)
-      url = config.GOOGLE_OAUTH_URL
-      client_id = config.GOOGLE_CLIENT_ID
-      scope = config.GOOGLE_SCOPE
-      redirect_uri = config.GOOGLE_REDIRECT_URI
+    def gh_oauth_url(config)
+      url = config.GH_OAUTH_URL
+      client_id = config.GH_CLIENT_ID
+      scope = config.GH_SCOPE
 
-      params = {
-        client_id: client_id,
-        redirect_uri: redirect_uri,
-        scope: scope,
-        response_type: 'code',
-        access_type: 'offline',  
-        prompt: 'consent'        
-      }
-      query_string = params.map { |k, v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
-      
-      "#{url}?#{query_string}"
-    end 
-  
+      "#{url}?client_id=#{client_id}&scope=#{scope}"
+    end
+
     route('auth') do |routing|
+      @oauth_callback = '/auth/sso_callback'
       @login_route = '/auth/login'
       routing.is 'login' do
         # GET /auth/login
         routing.get do
           view :login, locals: {
-            google_oauth_url: google_oauth_url(App.config)
+            gh_oauth_url: gh_oauth_url(App.config)
           }
         end
 
         # POST /auth/login
         routing.post do
           credentials = Form::LoginCredentials.new.call(routing.params)
+
           if credentials.failure?
             flash[:error] = 'Please enter both username and password'
             routing.redirect @login_route
           end
 
-          authenticated = AuthenticateAccount.new(App.config)
-                                             .call(**credentials.values)
+          authenticated = AuthenticateAccount.new.call(**credentials.values)
 
           current_account = Account.new(
             authenticated[:account],
@@ -55,28 +45,24 @@ module UCCMe
 
           flash[:notice] = "Welcome back #{current_account.username}!"
           routing.redirect '/'
-        rescue AuthenticateAccount::UnauthorizedError
-          flash.now[:error] = 'Username and password did not match our records'
+        rescue AuthenticateAccount::NotAuthenticatedError
+          flash[:error] = 'Username and password did not match our records'
           response.status = 401
-          view :login
-        rescue AuthenticateAccount::ApiServerError => error
-          App.logger.warn "API server error: #{error.inspect}\n#{error.backtrace}"
+          routing.redirect @login_route
+        rescue AuthenticateAccount::ApiServerError => e
+          App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
           flash[:error] = 'Our servers are not responding -- please try later'
           response.status = 500
           routing.redirect @login_route
         end
       end
 
-      @oauth_callback = '/auth/sso_callback'
       routing.is 'sso_callback' do
         # GET /auth/sso_callback
-          routing.get do
-          authorized = AuthorizeGoogleAccount
+        routing.get do
+          authorized = AuthorizeGithubAccount
                        .new(App.config)
                        .call(routing.params['code'])
-
-          puts "Authorized data: #{authorized.inspect}"
-          puts "About to create Account with: #{authorized[:account].inspect}, #{authorized[:auth_token].inspect}"
 
           current_account = Account.new(
             authorized[:account],
@@ -87,8 +73,8 @@ module UCCMe
 
           flash[:notice] = "Welcome #{current_account.username}!"
           routing.redirect '/'
-        rescue AuthorizeGoogleAccount::UnauthorizedError
-          flash[:error] = 'Could not login with Google'
+        rescue AuthorizeGithubAccount::UnauthorizedError
+          flash[:error] = 'Could not login with Github'
           response.status = 403
           routing.redirect @login_route
         rescue StandardError => e
@@ -99,9 +85,9 @@ module UCCMe
         end
       end
 
-
       @logout_route = '/auth/logout'
       routing.is 'logout' do
+        # GET /auth/logout
         routing.get do
           CurrentSession.new(session).delete
           flash[:notice] = "You've been logged out"
@@ -120,6 +106,7 @@ module UCCMe
           # POST /auth/register
           routing.post do
             registration = Form::Registration.new.call(routing.params)
+
             if registration.failure?
               flash[:error] = Form.validation_errors(registration)
               routing.redirect @register_route
@@ -127,22 +114,22 @@ module UCCMe
 
             VerifyRegistration.new(App.config).call(registration)
 
-            flash[:notice] = 'Please check your email to confirm your account'
+            flash[:notice] = 'Please check your email for a verification link'
             routing.redirect '/'
-          rescue VerifyRegistration::ApiServerError => error
-            App.logger.warn "API server error: #{error.inspect}\n #{error.backtrace}"
-            flash[:error] = 'Our server is currently unavailable. Please try again later.'
+          rescue VerifyRegistration::ApiServerError => e
+            App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
+            flash[:error] = 'Our servers are not responding -- please try later'
             routing.redirect @register_route
-          rescue StandardError => error
-            App.logger.error "Could not process registration: #{error.inspect}"
-            flash[:error] = 'Registration failed. Please try again.'
+          rescue StandardError => e
+            App.logger.error "Could not process registration: #{e.inspect}"
+            flash[:error] = 'Registration process failed -- please contact us'
             routing.redirect @register_route
           end
         end
 
         # GET /auth/register/<token>
         routing.get(String) do |registration_token|
-          flash.now[:notice] = 'Email Verified! Please enter password.'
+          flash.now[:notice] = 'Email Verified! Please choose a new password'
           new_account = SecureMessage.new(registration_token).decrypt
           view :register_confirm,
                locals: { new_account:,
