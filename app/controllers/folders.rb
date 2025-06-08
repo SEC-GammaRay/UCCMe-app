@@ -63,9 +63,15 @@ module UCCMe
 
           # POST /folders/[folder_id]/files/
           routing.post('files') do
-            file_data = Form::NewFile.new.call(routing.params)
+            orig_ext = File.extname(routing.params['file'][:filename])
+            file_input = {
+              filename: "#{routing.params['filename']}#{orig_ext}",
+              description: routing.params['description'],
+              file: routing.params['file'][:tempfile]
+            }
+            file_data = Form::NewFile.new.call(file_input)
             if file_data.failure?
-              flash[:error] = Form.message_values(file_data)
+              flash[:error] = Form.validation_errors(file_data)
               routing.halt
             end
 

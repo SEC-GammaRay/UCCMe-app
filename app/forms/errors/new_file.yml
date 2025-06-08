@@ -2,6 +2,5 @@ en:
   errors:
     filename: 'Provide filename with up to 256 legal characters'
     filename_valid?: 'Filename has illegal characters (e.g., & | \\ / <tab>)'
-    path_chars?: 'Relative path has illegal characters (e.g., & | <tab>)'
     description: 'Provide description with up to 500 legal characters'
     content: 'Provide content for file'

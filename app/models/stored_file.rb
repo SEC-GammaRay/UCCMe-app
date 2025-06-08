@@ -5,7 +5,7 @@ require_relative 'folder'
 module UCCMe
   # Behaviors of the currently logged in account
   class StoredFile
-    attr_reader :id, :filename, :description, :content, :cc_types, # basic info
+    attr_reader :id, :filename, :description, :s3_path, :cc_types, # basic info
                 :folder # full details
 
     def initialize(info)
@@ -19,7 +19,7 @@ module UCCMe
       @id = attributes['id']
       @filename = attributes['filename']
       @description = attributes['description']
-      @content = attributes['content']
+      @s3_path = attributes['s3_path']
       @cc_types = attributes['cc_types']
     end
 

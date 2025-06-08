@@ -10,10 +10,12 @@ module UCCMe
 
       params do
         required(:filename).filled(max_size?: 256, format?: FILENAME_REGEX)
-        optional(:relative_path).maybe(format?: PATH_REGEX)
         optional(:description).maybe(:string, max_size?: 500)
-        required(:content).filled(:string)
-        optional(:folder_id).maybe(:integer)
+        required(:file)
+      end
+
+      rule(:file) do
+        key.failure('must be a valid uploaded file') unless value.respond_to?(:read)
       end
     end
   end
