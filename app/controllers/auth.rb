@@ -4,6 +4,7 @@ require 'roda'
 require_relative './app'
 
 module UCCMe
+  # rubocop disable: Metrics/ClassLength
   # Web controller for UCCMe App
   class App < Roda
     def gh_oauth_url(config)
@@ -138,4 +139,5 @@ module UCCMe
       end
     end
   end
+  # rubocop enable: Metrics/ClassLength
 end
