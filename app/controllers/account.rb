@@ -3,18 +3,33 @@
 require 'roda'
 require_relative 'app'
 
+
 module UCCMe
   # Web controller for UCCMe API
   class App < Roda
     route('account') do |routing|
-      routing.on do
-        # GET /account/login
-        routing.get String do |username|
-          if @current_account && @current_account.username == username
-            view :account, locals: { current_account: @current_account }
-          else
+      routing.on String do |username|
+        # GET /account/[username]
+        routing.get do
+          unless @current_account.logged_in?
+            flash[:error] = 'You must be logged in to view your requests.'
             routing.redirect '/auth/login'
           end
+          
+          account = GetAccountDetails.new(App.config).call(
+            @current_account, username
+          )
+
+          if account.nil?
+            response.status = 404
+            flash[:error] = 'Account not found'
+            routing.redirect(request.referrer || '/')
+          end
+
+          view :account, locals: { account: account }
+        rescue GetAccountDetails::InvalidAccount => e
+          flash[:error] = e.message
+          routing.redirect '/auth/login'
         end
 
         # POST /account/<registration_token>
