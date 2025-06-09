@@ -15,6 +15,11 @@ Metrics/BlockLength:
     - rackfile
     - app/controllers/*.rb
 
+Metrics/ClassLength:
+  Enabled: true
+  Exclude:
+    - app/controllers/*.rb
+
 Security/YAMLLoad:
   Enabled: true
   Exclude:

@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 require 'roda'
-require_relative './app'
+require_relative 'app'
 
 module UCCMe
-  # rubocop disable: Metrics/ClassLength
   # Web controller for UCCMe App
   class App < Roda
     def gh_oauth_url(config)
@@ -50,8 +49,8 @@ module UCCMe
           flash[:error] = 'Username and password did not match our records'
           response.status = 401
           routing.redirect @login_route
-        rescue AuthenticateAccount::ApiServerError => e
-          App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
+        rescue AuthenticateAccount::ApiServerError => error
+          App.logger.warn "API server error: #{error.inspect}\n#{error.backtrace}"
           flash[:error] = 'Our servers are not responding -- please try later'
           response.status = 500
           routing.redirect @login_route
@@ -78,8 +77,8 @@ module UCCMe
           flash[:error] = 'Could not login with Github'
           response.status = 403
           routing.redirect @login_route
-        rescue StandardError => e
-          puts "SSO LOGIN ERROR: #{e.inspect}\n#{e.backtrace}"
+        rescue StandardError => error
+          puts "SSO LOGIN ERROR: #{error.inspect}\n#{error.backtrace}"
           flash[:error] = 'Unexpected API Error'
           response.status = 500
           routing.redirect @login_route
@@ -117,12 +116,12 @@ module UCCMe
 
             flash[:notice] = 'Please check your email for a verification link'
             routing.redirect '/'
-          rescue VerifyRegistration::ApiServerError => e
-            App.logger.warn "API server error: #{e.inspect}\n#{e.backtrace}"
+          rescue VerifyRegistration::ApiServerError => error
+            App.logger.warn "API server error: #{error.inspect}\n#{error.backtrace}"
             flash[:error] = 'Our servers are not responding -- please try later'
             routing.redirect @register_route
-          rescue StandardError => e
-            App.logger.error "Could not process registration: #{e.inspect}"
+          rescue StandardError => error
+            App.logger.error "Could not process registration: #{error.inspect}"
             flash[:error] = 'Registration process failed -- please contact us'
             routing.redirect @register_route
           end

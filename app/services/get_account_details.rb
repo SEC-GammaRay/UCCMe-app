@@ -2,7 +2,7 @@
 
 require 'http'
 
-# Returns all folder belonging to an account 
+# Returns all folder belonging to an account
 class GetAccountDetails
   # Error for accounts that cannot be created
   class InvalidAccount < StandardError
