@@ -25,6 +25,10 @@ li.list-group-item {
     transform: scaleX(-1);
 }
 
+button.fa-github{
+    letter-spacing: 1.5px;
+}
+
 @media (min-width: 576px) {
     .collapse.nabar-collapse {
         display: block;

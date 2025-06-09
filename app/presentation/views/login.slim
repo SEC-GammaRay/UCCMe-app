@@ -1,4 +1,4 @@
-div class="row"
+div class="row mt-3"
   div class="col-sm-1"
   div class="col-sm-4"
     h4 class="text-center" Login with credentials
@@ -10,14 +10,13 @@ div class="row"
         label for='input-password' Password
         input type='password' name='password' id='input-password' class="form-control"
       
-      button type='submit' id='button-login' value='login' class="btn btn-primary btn-block" login
-  .col-sm-2.text-center
+      button type='submit' id='button-login' value='login' class="btn btn-primary btn-block mt-3" login
+  div class="col-sm-2 text-center"
     h4 or
-  .col-sm-4
-    .row
-      h4.text-center Login with Github
-    .row
+  div class="col-sm-4"
+    div class="row"
+      h4 class="text-center" Login with GitHub
+    div class="row"
       a class="btn btn-block btn-social btn-github" href=gh_oauth_url
-        span class="fab fa-gihub"
-        == "Github Sign-in"
-  .col-sm-1
+        button type="button" class="fab fa-github btn btn-primary btn-block" GitHub Sign-in
+  div class="col-sm-1"
