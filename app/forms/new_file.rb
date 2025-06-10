@@ -11,6 +11,7 @@ module UCCMe
       params do
         required(:filename).filled(max_size?: 256, format?: FILENAME_REGEX)
         optional(:description).maybe(:string, max_size?: 500)
+        required(:cc_type).filled(:string, included_in?: %w[BY-NC-ND BY-NC-SA])
         required(:file)
       end
 
