@@ -13,6 +13,14 @@ div id="newFileModal" class="modal fade" role="dialog"
             label for='description_input' Description:
             input type='text' name='description' id='description_input' class="form-control" placeholder="Describe the file"
           div class="form-group"
+            span CC Type:
+            div class="form-check"
+              input.form-check-input type="radio" name="cc_type" id="cctype_view" value="CC BY-NC-ND" required="required"
+              label.form-check-label for="cctype_view" CC BY-NC-ND  (VIEW ONLY)
+            div class="form-check"
+              input.form-check-input type="radio" name="cc_type" id="cctype_copy" value="CC BY-NC-SA" required="required"
+              label.form-check-label for="cctype_copy" CC BY-NC-SA   (CAN COPY)
+          div class="form-group"
             label for="file_input" File:
             input type="file" name="file" id="file_input" class="form-control" required="required"
           button type='submit' class="btn btn-primary submit mt-3 me-1" id='registration-form-submit' value='submit' Create
