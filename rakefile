@@ -65,6 +65,15 @@ namespace :generate do
     secret64 = Base64.strict_encode64(session_secret)
     puts "New SESSION_SECRET (base64): #{secret64}"
   end
+
+  desc 'Create signing key for SignedMessage'
+  task :signing_key => :load_lib do
+    require 'base64'
+    require 'rbnacl'
+    signing_key = RbNaCl::Random.random_bytes(32)
+    key64 = Base64.strict_encode64(signing_key)
+    puts "New SIGNING_KEY (base64): #{key64}"
+  end
 end
 
 # Session management

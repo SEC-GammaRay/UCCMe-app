@@ -37,6 +37,7 @@ module UCCMe
     ONE_MONTH = 60 * 60 * 24 * 30
     @redis_url = ENV.delete('REDISCLOUD_URL')
     SecureMessage.setup(ENV.delete('MSG_KEY'))
+    SignedMessage.setup(ENV.delete('SIGNING_KEY'))
     SecureSession.setup(@redis_url)
 
     configure :development, :test do

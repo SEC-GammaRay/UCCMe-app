@@ -19,7 +19,7 @@ describe 'Test Service Objects' do
       auth_account_file = 'spec/fixtures/auth_account.json'
       auth_return_json = File.read(auth_account_file)
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @credentials.to_json)
+             .with(body: SignedMessage.sign(@credentials).to_json)
              .to_return(body: auth_return_json,
                         headers: { 'Content-Type' => 'application/json' })
 
@@ -33,7 +33,7 @@ describe 'Test Service Objects' do
 
     it 'BAD: should not find a false authenticated account' do
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @mal_credentials.to_json)
+             .with(body: SignedMessage.sign(@mal_credentials).to_json)
              .to_return(status: 401)
       _(proc {
         UCCMe::AuthenticateAccount.new.call(**@mal_credentials)
