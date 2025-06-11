@@ -12,6 +12,22 @@ module UCCMe
 
         routing.on(String) do |folder_id|
           @folder_route = "#{@folders_route}/#{folder_id}"
+          @leave_route = "/folders/#{folder_id}/leave"
+          routing.on('leave') do
+            # GET /folders/[folder_id]/leave
+            routing.get do
+              LeaveFolder.new(App.config).call(
+                current_account: @current_account,
+                folder_id: folder_id
+              )
+
+              flash[:notice] = 'Leave the folder successfully'
+            rescue StandardError
+              flash[:error] = 'Could not leave the folder'
+            ensure
+              routing.redirect @folders_route
+            end
+          end
 
           # GET /folders/[folder_id]
           routing.get do
