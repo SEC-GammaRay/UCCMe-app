@@ -12,7 +12,7 @@ module UCCMe
     FONT_SRC = %w[https://cdn.jsdelivr.net].freeze
     SCRIPT_SRC = %w[https://cdn.jsdelivr.net].freeze
     STYLE_SRC = %w[https://bootswatch.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com].freeze
-    # Add AWS S3 domains for your bucket
+    # Add AWS S3 domains 
     AWS_S3_DOMAINS = %w[https://uccme.s3.ap-northeast-1.amazonaws.com].freeze
     
     configure :production do
@@ -38,14 +38,13 @@ module UCCMe
       config.x_permitted_cross_domain_policies = 'none'
       config.referrer_policy = 'origin-when-cross-origin'
       
-      # NOTE: single-quotes needed around 'self' and 'none' in CSPs
       # rubocop:disable Lint/PercentStringArray
       config.csp = {
         report_only: false,
         preserve_schemes: true,
         default_src: %w['self'],
-        child_src: %w['self'] + AWS_S3_DOMAINS,  # Allow iframes from AWS S3
-        frame_src: %w['self'] + AWS_S3_DOMAINS,  # Explicit frame-src for older browsers
+        child_src: %w['self'] + AWS_S3_DOMAINS,  # allow iframes from AWS S3
+        frame_src: %w['self'] + AWS_S3_DOMAINS,  # explicit frame-src for older browsers
         connect_src: %w[wws:],
         img_src: %w['self'],
         font_src: %w['self'] + FONT_SRC,
