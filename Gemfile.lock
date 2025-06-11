@@ -155,6 +155,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1)
     ruby-progressbar (1.13.0)
+    secure_headers (7.1.0)
     slim (5.2.1)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
@@ -208,6 +209,7 @@ DEPENDENCIES
   rubocop-minitest
   rubocop-performance
   rubocop-rake (~> 0.7.1)
+  secure_headers
   slim
   webmock
 

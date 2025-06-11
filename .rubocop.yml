@@ -34,3 +34,8 @@ Style/SymbolArray:
 Naming/RescuedExceptionsVariableName:
   Enabled: true
   PreferredName: error
+
+Style/HashSyntax:
+  Enabled: true
+  Exclude:
+    - Rakefile
