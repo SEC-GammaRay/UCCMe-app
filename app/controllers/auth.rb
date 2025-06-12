@@ -48,7 +48,7 @@ module UCCMe
         rescue AuthenticateAccount::NotAuthenticatedError
           flash[:error] = 'Username and password did not match our records'
           response.status = 401
-          routing.redirect @login_route
+          view :login
         rescue AuthenticateAccount::ApiServerError => error
           App.logger.warn "API server error: #{error.inspect}\n#{error.backtrace}"
           flash[:error] = 'Our servers are not responding -- please try later'

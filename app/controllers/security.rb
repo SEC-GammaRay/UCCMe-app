@@ -10,7 +10,7 @@ module UCCMe
     plugin :multi_route
     
     FONT_SRC = %w[https://cdn.jsdelivr.net].freeze
-    SCRIPT_SRC = %w[https://cdn.jsdelivr.net].freeze
+    SCRIPT_SRC =%w[https://cdn.jsdelivr.net].freeze
     STYLE_SRC = %w[https://bootswatch.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com].freeze
     # Add AWS S3 domains 
     AWS_S3_DOMAINS = %w[https://uccme.s3.ap-northeast-1.amazonaws.com].freeze
