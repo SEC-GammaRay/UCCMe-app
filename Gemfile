@@ -25,6 +25,7 @@ gem 'redis'
 gem 'dry-validation', '~>1.10'
 gem 'rack-ssl-enforcer'
 gem 'rbnacl' # assumes libsodium package already installed
+gem 'secure_headers'
 
 # encoding
 gem 'base64'

@@ -18,11 +18,11 @@ module UCCMe
 
     # Environment variables setup
     Figaro.application = Figaro::Application.new(
-      environment:,
+      environment: environment,
       path: File.expand_path('config/secrets.yml')
     )
     Figaro.load
-    def self.config = Figaro.env
+    def self.config() = Figaro.env
 
     # HTTP Request logging
     configure :development, :production do
@@ -31,24 +31,30 @@ module UCCMe
 
     # Custom events logging
     LOGGER = Logger.new($stderr)
-    def self.logger = LOGGER
+    def self.logger() = LOGGER
 
     # Sesssion configuration
     ONE_MONTH = 60 * 60 * 24 * 30
     @redis_url = ENV.delete('REDISCLOUD_URL')
     SecureMessage.setup(ENV.delete('MSG_KEY'))
+    SignedMessage.setup(ENV.delete('SIGNING_KEY'))
     SecureSession.setup(@redis_url)
+    
 
     configure :development, :test do
       # Suppresses log info/warning outputs in dev/test environments
       logger.level = Logger::ERROR
 
       # use Rack::Session::Cookie,
-      #   expire_after: ONE_MONTH,
-      #   secret: config.SESSION_SECRET
+      #     secret: config.SESSION_SECRET,
+      #     expire_after: ONE_MONTH,
+      #     httponly: true,
+      #     same_site: :lax
 
       use Rack::Session::Pool,
-          expire_after: ONE_MONTH
+          expire_after: ONE_MONTH,
+          httponly: true,
+          same_site: :lax
 
       # Allows binding.pry to be used in development
       require 'pry'
